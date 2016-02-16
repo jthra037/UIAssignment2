@@ -132,14 +132,11 @@ function drawMenu(thisMenu)
     {
 	ctx.fillStyle = "blue";
 	ctx.fillRect(thisMenu[i].x,thisMenu[i].y,thisMenu[i].w,thisMenu[i].h);
-    }
-	for (var j = 0; j < thisMenu.length; j++)
-	{
-		ctx.font = "14px Arial";
-		ctx.fillStyle = "black";
-		ctx.fillText(thisMenu[j].id, thisMenu[j].x+thisMenu[j].w/2.2, thisMenu[j].y+thisMenu[j].h/2);
-	}
 	
+	ctx.font = "14px Arial";
+	ctx.fillStyle = "black";
+	ctx.fillText(thisMenu[i].id, thisMenu[i].x+thisMenu[i].w/2.2, thisMenu[i].y+thisMenu[i].h/2);
+    }
 }
 
 function getClickPosition(e) 
