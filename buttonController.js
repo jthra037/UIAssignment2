@@ -8,93 +8,94 @@ var ctx = c.getContext("2d");
 var currentScreen;
 var prevScreen;
 
-var Button = function(x, y, w, h) // define a custome button class for canvas
+var Button = function(x, y, w, h, id) // define a custome button class for canvas
 {
     this.x = x;
     this.y = y;
     this.w = w;
     this.h = h;
+	this.id = id;
 }
 
 // define all the buttons in the game, by screen
 // splash screen ss screen
-var ssScreenBtn = new Button(0,0,c.width,c.height);
+var ssScreenBtn = new Button(0,0,c.width,c.height,"Splash Screen");
 ssScreenBtn.click = function()
 {
     currentScreen = mainMenu;
 }
 // main menu mm screen
-var mmPlayBtn = new Button(200,20,400,50);
+var mmPlayBtn = new Button(200,20,400,50,"Play");
 mmPlayBtn.click = function()
 {
     currentScreen = inPlay;
 }
-var mmSettingsBtn = new Button(200,90,400,50);
+var mmSettingsBtn = new Button(200,90,400,50,"Settings");
 mmSettingsBtn.click = function()
 {
     currentScreen = settingsMenu;
     prevScreen = mainMenu;
 }
-var mmCreditsBtn = new Button(200,160,190,50);
+var mmCreditsBtn = new Button(200,160,190,50,"Credits");
 mmCreditsBtn.click = function()
 {
     currentScreen = creditScreen;
 }
-var mmQuitBtn = new Button(410,160,190,50);
+var mmQuitBtn = new Button(410,160,190,50,"Quit");
 mmQuitBtn.click = endGame;
 // in play ip screen
-var ipPauseBtn = new Button(5,5,100,50);
+var ipPauseBtn = new Button(5,5,100,50,"Pause");
 ipPauseBtn.click = function()
 {
     currentScreen = pauseMenu;
     prevScreen = inPlay;
 }
 // settings menu sm screen
-var smReturnBtn = new Button(5,5,100,50);
+var smReturnBtn = new Button(5,5,100,50,"Return");
 smReturnBtn.click = function()
 {
     currentScreen = prevScreen;
 }
-var smControlBtn = new Button(200,160,190,50);
+var smControlBtn = new Button(200,160,190,50,"Controls");
 smControlBtn.click = function()
 {
 
 }
 // pause menu pm screen
-var pmReturnBtn = new Button(200,40,400,100);
+var pmReturnBtn = new Button(200,40,400,100,"Return");
 pmReturnBtn.click = function()
 {
     currentScreen = inPlay;
 }
-var pmSettingsBtn = new Button(200,160,190,50);
+var pmSettingsBtn = new Button(200,160,190,50,"Settings");
 pmSettingsBtn.click = function()
 {
     currentScreen = settingsMenu;
     prevScreen = pauseMenu;
 }
-var pmQuitBtn = new Button(410,160,190,50);
+var pmQuitBtn = new Button(410,160,190,50,"Quit");
 pmQuitBtn.click = function()
 {
     currentScreen = mainMenu;
 }
 // game over go screen
-var goCreditsBtn = new Button(200,20,400,50);
+var goCreditsBtn = new Button(200,20,400,50,"Credits");
 goCreditsBtn.click = function()
 {
     currentScreen = creditScreen;
 }
-var goPlayBtn = new Button(200,280,190,50);
+var goPlayBtn = new Button(200,280,190,50,"Play");
 goPlayBtn.click = function()
 {
     currentScreen = inPlay;
 }
-var goQuitBtn = new Button(410,280,190,50);
+var goQuitBtn = new Button(410,280,190,50,"Quit");
 goQuitBtn.click = function()
 {
     currentScreen = mainMenu;
 }
 // credit screen cs screen
-var csScreenBtn = new Button(0,0,c.width,c.height);
+var csScreenBtn = new Button(0,0,c.width,c.height,"Credits");
 csScreenBtn.click = function()
 {
     currentScreen = mainMenu;
@@ -132,6 +133,13 @@ function drawMenu(thisMenu)
 	ctx.fillStyle = "blue";
 	ctx.fillRect(thisMenu[i].x,thisMenu[i].y,thisMenu[i].w,thisMenu[i].h);
     }
+	for (var j = 0; j < thisMenu.length; j++)
+	{
+		ctx.font = "14px Arial";
+		ctx.fillStyle = "black";
+		ctx.fillText(thisMenu[j].id, thisMenu[j].x+thisMenu[j].w/2.2, thisMenu[j].y+thisMenu[j].h/2);
+	}
+	
 }
 
 function getClickPosition(e) 
