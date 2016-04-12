@@ -9,10 +9,11 @@ var currentScreen;
 var prevScreen;
 
 // transition frame x value
+var transitioning = false;
 var transX = 0.0;
 var transI = 0;
 const DIF = 200;
-const TRANS_TIME = 2000;
+const TRANS_SPEED = 2;
 const NUM_FRAMES = 30;
 
 var Button = function(x, y, w, h, text) // define a custom button class for canvas
@@ -30,6 +31,7 @@ var ssScreenBtn = new Button(0,0,c.width,c.height,
 			     "Splash Screen");
 ssScreenBtn.click = function()
 {
+    transitioning = true;
     currentScreen = mainMenu;
 }
 // main menu mm screen
@@ -37,12 +39,14 @@ var mmPlayBtn = new Button(200,20,400,50,
 			  "Play");
 mmPlayBtn.click = function()
 {
+    transitioning = true;
     currentScreen = inPlay;
 }
 var mmSettingsBtn = new Button(200,90,400,50,
 			      "Settings");
 mmSettingsBtn.click = function()
 {
+    transitioning = true;
     currentScreen = settingsMenu;
     prevScreen = mainMenu;
 }
@@ -50,6 +54,7 @@ var mmCreditsBtn = new Button(200,160,190,50,
 			     "Credits");
 mmCreditsBtn.click = function()
 {
+    transitioning = true;
     currentScreen = creditScreen;
 }
 var mmQuitBtn = new Button(410,160,190,50,
@@ -68,14 +73,20 @@ var smReturnBtn = new Button(5,5,100,50,
 			    "Return");
 smReturnBtn.click = function()
 {
+    transitioning = true;
     currentScreen = prevScreen;
 }
 var smControlBtn = new Button(200,160,190,50,
 			     "Controls");
 smControlBtn.click = function()
 {
-
+    smControlText.text = (smControlText.text == "Touch") ? "Tilt" : "Touch";
 }
+// type of controls
+var smControlText = new Button(410, 160, 190, 50,
+			       "Touch");
+smControlText.color = "white";
+
 // pause menu pm screen
 var pmReturnBtn = new Button(200,40,400,100,
 			    "Return");
@@ -87,6 +98,7 @@ var pmSettingsBtn = new Button(200,160,190,50,
 			      "Settings");
 pmSettingsBtn.click = function()
 {
+    transitioning = true;
     currentScreen = settingsMenu;
     prevScreen = pauseMenu;
 }
@@ -94,6 +106,7 @@ var pmQuitBtn = new Button(410,160,190,50,
 			  "Quit");
 pmQuitBtn.click = function()
 {
+    transitioning = true;
     currentScreen = mainMenu;
 }
 // game over go screen
@@ -101,18 +114,21 @@ var goCreditsBtn = new Button(200,20,400,50,
 			     "Credits");
 goCreditsBtn.click = function()
 {
+    transitioning = true;
     currentScreen = creditScreen;
 }
 var goPlayBtn = new Button(200,280,190,50,
 			  "Play");
 goPlayBtn.click = function()
 {
+    transitioning = true;
     currentScreen = inPlay;
 }
 var goQuitBtn = new Button(410,280,190,50,
 			  "Quit");
 goQuitBtn.click = function()
 {
+    transitioning = true;
     currentScreen = mainMenu;
 }
 // credit screen cs screen
@@ -120,6 +136,7 @@ var csScreenBtn = new Button(0,0,c.width,c.height,
 			    "Credits");
 csScreenBtn.click = function()
 {
+    transitioning = true;
     currentScreen = mainMenu;
 }
 
@@ -132,7 +149,8 @@ var mainMenu = [mmPlayBtn, // play
 var inPlay = [ipPauseBtn]; // pause button
 
 var settingsMenu = [smReturnBtn, // return
-		    smControlBtn]; // control toggle
+		    smControlBtn, // control toggle
+		    smControlText]; // control results 
 
 var pauseMenu = [pmReturnBtn, // return to game
 		pmSettingsBtn, // settings
@@ -149,18 +167,18 @@ var creditScreen = [csScreenBtn]; // clickable credit screen
 //this function creates a brief screen transition before showing the next screen
 function transition()
 {
-    console.log("transX = " + transX);
-    console.log("transI = " + transI);
-
+    //console.log("transX = " + transX);
+    //console.log("transI = " + transI);
     if (transX == 0)
     {
+	//console.log("transition init");
 	ctx.beginPath();
-	transX = transX + (c.width/NUM_FRAMES);
+	transX = transX + ((c.width * TRANS_SPEED)/NUM_FRAMES);
 	++transI;
-	setTimeout(transition(), TRANS_TIME/NUM_FRAMES);
     }
-    else if (transI < NUM_FRAMES)
+    else if (transI < (NUM_FRAMES / TRANS_SPEED))
     {
+	//console.log("writing frame");
 	ctx.fillStyle = "white";
 	ctx.moveTo(0, 0);
 	ctx.lineTo(transX, 0);
@@ -168,25 +186,23 @@ function transition()
 	ctx.lineTo(0, c.height);
 	ctx.closePath();
 	ctx.fill();
-	transX = transX + (c.width/NUM_FRAMES);
+	transX = transX + ((c.width * TRANS_SPEED)/NUM_FRAMES);
 	++transI;
-	setTimeout(transition(), TRANS_TIME/NUM_FRAMES);
     }
     else
     {
+	//console.log("resetting transition vars");
 	transX = 0.0;
 	transI = 0;
+	transitioning = false;
     }
+    //console.log("returning to drawMenu()");
 }
 
 // this function draws buttons on each scene in the canvas
 function drawMenu(thisMenu)
 {
-    console.log("Transitioning " + NUM_FRAMES + 
-		" frames over " + TRANS_TIME +
-		" ms.");
-    transition();
-    console.log("Clearing screen.");
+    //console.log("Clearing screen.");
     ctx.clearRect(0,0,c.width,c.height);
 
     for (var i = 0; i < thisMenu.length; i++)
@@ -194,7 +210,7 @@ function drawMenu(thisMenu)
 	// directions for button appearance
 	ctx.beginPath();
 	ctx.rect(thisMenu[i].x,thisMenu[i].y,thisMenu[i].w,thisMenu[i].h);
-	ctx.fillStyle = "blue";
+	ctx.fillStyle = (thisMenu[i].color != null) ? thisMenu[i].color : "blue";
 	ctx.fill();
 	ctx.strokeStyle = "black";
 	ctx.stroke();
@@ -218,7 +234,6 @@ function getClickPosition(e)
     if (clicked != -1)
     {
 	currentScreen[clicked].click();
-	drawMenu(currentScreen);
     }
 }
  
@@ -252,8 +267,6 @@ function checkCollision(xPos, yPos)
 	top = currentScreen[i].y;
 	bottom = top + currentScreen[i].h;
 	
-	//console.log(left+','+top+','+right+','+bottom);
-
 	if ((xPos >= left) &&
 	    (xPos <= right) &&
 	    (yPos >= top) &&
@@ -269,6 +282,7 @@ function checkCollision(xPos, yPos)
 function endGame()
 {
     ctx.clearRect(0,0,c.width,c.height);
+    clearInterval(running);
 }
 
 // provide debug shortcuts for dev to quickly change screens
@@ -298,7 +312,17 @@ function debugShortcut(e)
     }
 }
 
-// show the splash screen first
+function render()
+{
+    if (transitioning)
+    {
+	transition();
+    }
+    else
+    {
+	drawMenu(currentScreen);
+    }
+}
+
 currentScreen = splashScreen;
-// and enter the draw loop
-drawMenu(currentScreen);
+var running = setInterval(render, 1000/NUM_FRAMES);
