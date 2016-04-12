@@ -8,6 +8,13 @@ var ctx = c.getContext("2d");
 var currentScreen;
 var prevScreen;
 
+// transition frame x value
+var transX = 0.0;
+var transI = 0;
+const DIF = 200;
+const TRANS_TIME = 2000;
+const NUM_FRAMES = 30;
+
 var Button = function(x, y, w, h, text) // define a custom button class for canvas
 {
     this.x = x;
@@ -139,9 +146,47 @@ var splashScreen = [ssScreenBtn]; // clickable splash screen
 
 var creditScreen = [csScreenBtn]; // clickable credit screen
 
+//this function creates a brief screen transition before showing the next screen
+function transition()
+{
+    console.log("transX = " + transX);
+    console.log("transI = " + transI);
+
+    if (transX == 0)
+    {
+	ctx.beginPath();
+	transX = transX + (c.width/NUM_FRAMES);
+	++transI;
+	setTimeout(transition(), TRANS_TIME/NUM_FRAMES);
+    }
+    else if (transI < NUM_FRAMES)
+    {
+	ctx.fillStyle = "white";
+	ctx.moveTo(0, 0);
+	ctx.lineTo(transX, 0);
+	ctx.lineTo(transX - DIF, c.height);
+	ctx.lineTo(0, c.height);
+	ctx.closePath();
+	ctx.fill();
+	transX = transX + (c.width/NUM_FRAMES);
+	++transI;
+	setTimeout(transition(), TRANS_TIME/NUM_FRAMES);
+    }
+    else
+    {
+	transX = 0.0;
+	transI = 0;
+    }
+}
+
 // this function draws buttons on each scene in the canvas
 function drawMenu(thisMenu)
 {
+    console.log("Transitioning " + NUM_FRAMES + 
+		" frames over " + TRANS_TIME +
+		" ms.");
+    transition();
+    console.log("Clearing screen.");
     ctx.clearRect(0,0,c.width,c.height);
 
     for (var i = 0; i < thisMenu.length; i++)
