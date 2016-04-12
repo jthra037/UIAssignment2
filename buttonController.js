@@ -8,6 +8,27 @@ var ctx = c.getContext("2d");
 var currentScreen;
 var prevScreen;
 
+// load button click sound clip
+var clip = document.getElementById("click");
+
+// load main menu clip
+var mainMenuClip = document.getElementById("mainTheme");
+
+// load inPlay audio clip
+var inPlayClip = document.getElementById("inPlayClip");
+
+// load pause audio clip
+var pauseClip = document.getElementById("pauseClip");
+
+// load game over audio clip
+var gameOverClip = document.getElementById("gameOverClip");
+
+// load credits audio clip
+var creditScreenClip = document.getElementById("creditsClip");
+
+// load splash screen audio clip
+var splashScreenClip = document.getElementById("splashScreenClip");
+
 // transition frame x value
 var transitioning = false;
 var transX = 0.0;
@@ -145,24 +166,31 @@ var mainMenu = [mmPlayBtn, // play
 		mmSettingsBtn, // settings
 		mmCreditsBtn, // credits
 		mmQuitBtn]; // quit
+mainMenu.audio = menuTheme;
 
 var inPlay = [ipPauseBtn]; // pause button
+inPlay.audio = inPlayClip;
 
 var settingsMenu = [smReturnBtn, // return
 		    smControlBtn, // control toggle
-		    smControlText]; // control results 
+		    smControlText]; // control results
+settingsMenu.audio = menuTheme;
 
 var pauseMenu = [pmReturnBtn, // return to game
 		pmSettingsBtn, // settings
 		pmQuitBtn]; // quit
+pauseMenu.audio = menuTheme;
 
 var gameOverMenu = [goCreditsBtn, // credits
 		    goPlayBtn, // play again
 		    goQuitBtn]; //quit
+gameOverMenu.audio = gameOverClip;
 
 var splashScreen = [ssScreenBtn]; // clickable splash screen
+splashScreen.audio = splashScreenClip;
 
 var creditScreen = [csScreenBtn]; // clickable credit screen
+creditScreen.audio = creditScreenClip;
 
 //this function creates a brief screen transition before showing the next screen
 function transition()
@@ -227,13 +255,17 @@ function drawMenu(thisMenu)
 // and acts on the resulting collision with button elements
 function getClickPosition(e) 
 {
-    var parentPosition = getPosition(e.currentTarget);
+    
+	
+	var parentPosition = getPosition(e.currentTarget);
     var xPosition = e.clientX - parentPosition.x;
     var yPosition = e.clientY - parentPosition.y;
     var clicked = checkCollision(xPosition, yPosition);
     if (clicked != -1)
     {
+	currentScreen.audio.pause();
 	currentScreen[clicked].click();
+	clip.play();
     }
 }
  
@@ -289,26 +321,23 @@ function endGame()
 function debugShortcut(e)
 {
     console.log(e.keyCode);
-    
+    currentScreen.audio.pause();
+
     if (e.keyCode == 82)
     {
 	currentScreen = inPlay;
-	drawMenu(currentScreen);
     }
     if (e.keyCode == 88)
     {
 	currentScreen = gameOverMenu;
-	drawMenu(currentScreen);
     }
     if (e.keyCode == 32)
     {
 	currentScreen = splashScreen;
-	drawMenu(currentScreen);
     }
     if (e.keyCode == 77)
     {
 	currentScreen = mainMenu;
-	drawMenu(currentScreen);
     }
 }
 
@@ -320,8 +349,10 @@ function render()
     }
     else
     {
+	currentScreen.audio.pause();
 	drawMenu(currentScreen);
     }
+	currentScreen.audio.play();
 }
 
 currentScreen = splashScreen;
