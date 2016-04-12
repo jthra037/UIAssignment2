@@ -8,94 +8,109 @@ var ctx = c.getContext("2d");
 var currentScreen;
 var prevScreen;
 
-var Button = function(x, y, w, h, id) // define a custome button class for canvas
+var Button = function(x, y, w, h, text) // define a custom button class for canvas
 {
     this.x = x;
     this.y = y;
     this.w = w;
     this.h = h;
-	this.id = id;
+    this.text = text;
 }
 
 // define all the buttons in the game, by screen
 // splash screen ss screen
-var ssScreenBtn = new Button(0,0,c.width,c.height,"Splash Screen");
+var ssScreenBtn = new Button(0,0,c.width,c.height,
+			     "Splash Screen");
 ssScreenBtn.click = function()
 {
     currentScreen = mainMenu;
 }
 // main menu mm screen
-var mmPlayBtn = new Button(200,20,400,50,"Play");
+var mmPlayBtn = new Button(200,20,400,50,
+			  "Play");
 mmPlayBtn.click = function()
 {
     currentScreen = inPlay;
 }
-var mmSettingsBtn = new Button(200,90,400,50,"Settings");
+var mmSettingsBtn = new Button(200,90,400,50,
+			      "Settings");
 mmSettingsBtn.click = function()
 {
     currentScreen = settingsMenu;
     prevScreen = mainMenu;
 }
-var mmCreditsBtn = new Button(200,160,190,50,"Credits");
+var mmCreditsBtn = new Button(200,160,190,50,
+			     "Credits");
 mmCreditsBtn.click = function()
 {
     currentScreen = creditScreen;
 }
-var mmQuitBtn = new Button(410,160,190,50,"Quit");
+var mmQuitBtn = new Button(410,160,190,50,
+			   "Quit");
 mmQuitBtn.click = endGame;
 // in play ip screen
-var ipPauseBtn = new Button(5,5,100,50,"Pause");
+var ipPauseBtn = new Button(5,5,100,50,
+			   "Pause");
 ipPauseBtn.click = function()
 {
     currentScreen = pauseMenu;
     prevScreen = inPlay;
 }
 // settings menu sm screen
-var smReturnBtn = new Button(5,5,100,50,"Return");
+var smReturnBtn = new Button(5,5,100,50,
+			    "Return");
 smReturnBtn.click = function()
 {
     currentScreen = prevScreen;
 }
-var smControlBtn = new Button(200,160,190,50,"Controls");
+var smControlBtn = new Button(200,160,190,50,
+			     "Controls");
 smControlBtn.click = function()
 {
 
 }
 // pause menu pm screen
-var pmReturnBtn = new Button(200,40,400,100,"Return");
+var pmReturnBtn = new Button(200,40,400,100,
+			    "Return");
 pmReturnBtn.click = function()
 {
     currentScreen = inPlay;
 }
-var pmSettingsBtn = new Button(200,160,190,50,"Settings");
+var pmSettingsBtn = new Button(200,160,190,50,
+			      "Settings");
 pmSettingsBtn.click = function()
 {
     currentScreen = settingsMenu;
     prevScreen = pauseMenu;
 }
-var pmQuitBtn = new Button(410,160,190,50,"Quit");
+var pmQuitBtn = new Button(410,160,190,50,
+			  "Quit");
 pmQuitBtn.click = function()
 {
     currentScreen = mainMenu;
 }
 // game over go screen
-var goCreditsBtn = new Button(200,20,400,50,"Credits");
+var goCreditsBtn = new Button(200,20,400,50,
+			     "Credits");
 goCreditsBtn.click = function()
 {
     currentScreen = creditScreen;
 }
-var goPlayBtn = new Button(200,280,190,50,"Play");
+var goPlayBtn = new Button(200,280,190,50,
+			  "Play");
 goPlayBtn.click = function()
 {
     currentScreen = inPlay;
 }
-var goQuitBtn = new Button(410,280,190,50,"Quit");
+var goQuitBtn = new Button(410,280,190,50,
+			  "Quit");
 goQuitBtn.click = function()
 {
     currentScreen = mainMenu;
 }
 // credit screen cs screen
-var csScreenBtn = new Button(0,0,c.width,c.height,"Credits");
+var csScreenBtn = new Button(0,0,c.width,c.height,
+			    "Credits");
 csScreenBtn.click = function()
 {
     currentScreen = mainMenu;
@@ -124,21 +139,31 @@ var splashScreen = [ssScreenBtn]; // clickable splash screen
 
 var creditScreen = [csScreenBtn]; // clickable credit screen
 
+// this function draws buttons on each scene in the canvas
 function drawMenu(thisMenu)
 {
     ctx.clearRect(0,0,c.width,c.height);
 
     for (var i = 0; i < thisMenu.length; i++)
     {
+	// directions for button appearance
+	ctx.beginPath();
+	ctx.rect(thisMenu[i].x,thisMenu[i].y,thisMenu[i].w,thisMenu[i].h);
 	ctx.fillStyle = "blue";
-	ctx.fillRect(thisMenu[i].x,thisMenu[i].y,thisMenu[i].w,thisMenu[i].h);
-	
-	ctx.font = "14px Arial";
+	ctx.fill();
+	ctx.strokeStyle = "black";
+	ctx.stroke();
+	// directions for button text
 	ctx.fillStyle = "black";
-	ctx.fillText(thisMenu[i].id, thisMenu[i].x+thisMenu[i].w/2.2, thisMenu[i].y+thisMenu[i].h/2);
+	ctx.font = "20px Arial";
+	ctx.fillText(thisMenu[i].text, 
+		     thisMenu[i].x + 10, 
+		     thisMenu[i].y + (thisMenu[i].h/2) + 10);
     }
 }
 
+// this function gets corrected click positions within the canvas
+// and acts on the resulting collision with button elements
 function getClickPosition(e) 
 {
     var parentPosition = getPosition(e.currentTarget);
@@ -152,6 +177,7 @@ function getClickPosition(e)
     }
 }
  
+// find the corrected click position
 function getPosition(element) 
 {
     var xPosition = 0;
@@ -165,6 +191,7 @@ function getPosition(element)
     return { x: xPosition, y: yPosition };
 }
 
+// check for button element collision based on corrected click position
 function checkCollision(xPos, yPos)
 {
     var flag;
@@ -193,11 +220,13 @@ function checkCollision(xPos, yPos)
     return -1;
 }
 
+// clear the screen at the end of the game
 function endGame()
 {
     ctx.clearRect(0,0,c.width,c.height);
 }
 
+// provide debug shortcuts for dev to quickly change screens
 function debugShortcut(e)
 {
     console.log(e.keyCode);
@@ -224,5 +253,7 @@ function debugShortcut(e)
     }
 }
 
+// show the splash screen first
 currentScreen = splashScreen;
+// and enter the draw loop
 drawMenu(currentScreen);
